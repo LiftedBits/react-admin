@@ -1,12 +1,15 @@
 import "./App.css"
 import { Container } from "@mui/material"
-import DataTable from "./components/table"
+import Home from "./pages/home"
+import CollectionPage from "./pages/collection-page"
+import { collections } from "./config/upayaa"
 
 function App() {
-  // const res = use(promise)
   return (
-    <Container style={{ textAlign: "center", marginTop: "50px" }}>
-      <DataTable />
+    <Container style={{ height: "100vh", width: "100vw" }}>
+      {/* <DataTable /> */}
+      {/* <Home /> */}
+      <CollectionPage collection={collections.blogs} />
     </Container>
   )
 }
