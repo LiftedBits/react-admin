@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mui/styles": "^6.2.0",
     "@mui/x-data-grid": "^7.23.1",
+    "firebase": "^11.1.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "react-firebase-hooks": "^5.1.1",
     "react-router-dom": "^7.0.2"
   },
   "devDependencies": {

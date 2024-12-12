@@ -28,6 +28,7 @@ export default function SplitButton() {
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
     index: number
   ) => {
+    console.log(event)
     setSelectedIndex(index)
     setOpen(false)
   }

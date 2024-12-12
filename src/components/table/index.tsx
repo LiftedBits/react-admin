@@ -15,6 +15,7 @@ interface DataTableProps {
 
 export default function DataTable({ rows, columns }: DataTableProps) {
   const [actions, setActions] = useState<Action[]>([])
+  console.log(actions)
   const apiRef = useGridApiRef()
   const handleSelectionChange = () => {
     const selectedRows = apiRef.current.getSelectedRows()
