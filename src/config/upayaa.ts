@@ -2,94 +2,114 @@ import ArticleIcon from "@mui/icons-material/Article"
 import ViewCarouselIcon from "@mui/icons-material/ViewCarousel"
 import TagIcon from "@mui/icons-material/Tag"
 import NewspaperIcon from "@mui/icons-material/Newspaper"
-import React from "react"
-import { GridRenderCellParams } from "@mui/x-data-grid"
+import { GridColDef } from "@mui/x-data-grid"
 import { renderImage, renderLink } from "../functions/custom-render"
+import { getDateRenderProps } from "../functions/utils"
 
 export type Collection = {
   title: string
   description: string
   key: string
   icon: typeof ArticleIcon
-  cols: {
-    field: string
-    headerName: string
-    // flex: number
-    renderCell?: (params: GridRenderCellParams) => React.ReactNode
-    type?: "string" | "singleSelect" | "dateTime"
-    valueGetter?: (params: GridRenderCellParams) => any
-  }[]
+  cols: GridColDef[]
 }
 
 export const collections: Record<string, Collection> = {
   blogs: {
     title: "Blogs",
-    description: "Read our latest blogs",
+    description: "Used to render blog cards on the blog page",
     key: "blogs",
     icon: ArticleIcon,
     cols: [
-      { field: "title", headerName: "Title" },
-      { field: "description", headerName: "Description" },
+      { field: "title", headerName: "Title", editable: true },
+      { field: "description", headerName: "Description", editable: true },
       {
         field: "url",
         headerName: "URL",
         renderCell: (params) => renderLink(params),
+        editable: true,
       },
-      {
-        field: "created_at",
-        headerName: "Created At",
-        type: "dateTime",
-        valueGetter: (params) => {
-          console.log(typeof params)
-          const dateStr = String(params)
-          const date = new Date(dateStr)
-          return date
-        },
-        renderCell: (params: GridRenderCellParams<Date>) => {
-          return params.value ? params.value.toLocaleString() : ""
-        },
-      },
+      // {
+      //   field: "created_at",
+      //   headerName: "Created At",
+      //   type: "dateTime",
+      //   ...getDateRenderProps(),
+      //   editable: true,
+      // },
       {
         field: "image_url",
         headerName: "Image URL",
         renderCell: (params) => renderImage(params),
+        editable: true,
       },
     ],
   },
   featured_blogs: {
     title: "Featured Blogs",
-    description: "Read our featured blogs",
+    description:
+      "Used to render the featured blogs on the carousel on the blog page",
     key: "featured_blogs",
     icon: ViewCarouselIcon,
     cols: [
-      { field: "title", headerName: "Title" },
-      { field: "url", headerName: "URL" },
-      { field: "created_at", headerName: "Created At" },
-      { field: "image_url", headerName: "Image URL" },
+      { field: "title", headerName: "Title", editable: true },
+      {
+        field: "url",
+        headerName: "URL",
+        renderCell: (params) => renderLink(params),
+        editable: true,
+      },
+      // {
+      //   field: "created_at",
+      //   headerName: "Created At",
+      //   ...getDateRenderProps(),
+      //   editable: true,
+      // },
+      {
+        field: "image_url",
+        headerName: "Image URL",
+        renderCell: (params) => renderImage(params),
+        editable: true,
+      },
     ],
   },
   social_media_posts: {
     title: "Social Media Posts",
-    description: "Check out our social media posts",
+    description: "Used to render social media post cards on the blog page",
     key: "social_media_posts",
     icon: TagIcon,
     cols: [
-      { field: "title", headerName: "Title" },
-      { field: "platform", headerName: "Platform" },
-      { field: "created_at", headerName: "Created At" },
-      { field: "post_url", headerName: "Post URL" },
+      { field: "title", headerName: "Title", editable: true },
+      {
+        field: "platform",
+        headerName: "Platform",
+        type: "singleSelect",
+        valueOptions: ["YouTube", "Instagram", "Facebook"],
+        editable: true,
+      },
+      // {
+      //   field: "created_at",
+      //   headerName: "Created At",
+      //   ...getDateRenderProps(),
+      //   editable: true,
+      // },
+      {
+        field: "post_url",
+        headerName: "Post URL",
+        renderCell: (params) => renderLink(params),
+        editable: true,
+      },
     ],
   },
   subscribers: {
     title: "Subscribers",
-    description: "View our subscribers",
+    description: "News letter subscribers",
     key: "subscribers",
     icon: NewspaperIcon,
     cols: [
-      { field: "title", headerName: "Title" },
-      { field: "email", headerName: "Email" },
-      { field: "name", headerName: "Name" },
-      { field: "phone_number", headerName: "Phone Number" },
+      { field: "email", headerName: "Email", editable: true },
+      { field: "name", headerName: "Name", editable: true },
+      { field: "phone_number", headerName: "Phone Number", editable: true },
+      // { field: "created_at", headerName: "Joined at", editable: true },
     ],
   },
 }

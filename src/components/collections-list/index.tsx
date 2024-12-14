@@ -3,7 +3,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  IconButton,
   Typography,
   Box,
   Paper,
@@ -11,8 +10,8 @@ import {
   Avatar,
   Divider,
 } from "@mui/material"
-import AddIcon from "@mui/icons-material/Add"
 import { Collection } from "../../config/upayaa"
+import { Link } from "react-router-dom"
 
 interface CollectionListItemProps {
   collection: Collection
@@ -20,33 +19,29 @@ interface CollectionListItemProps {
 
 const CollectionListItem = ({ collection }: CollectionListItemProps) => {
   return (
-    <ListItem
-      secondaryAction={
-        <IconButton edge="end" aria-label="delete">
-          <AddIcon />
-        </IconButton>
-      }
-    >
+    <ListItem>
       <ListItemAvatar>
         <Avatar>
           <collection.icon />
         </Avatar>
       </ListItemAvatar>
-      <ListItemText
-        primary={collection.title}
-        secondary={
-          <React.Fragment>
-            <Typography
-              component="span"
-              variant="body2"
-              sx={{ color: "text.primary", display: "inline" }}
-            >
-              {collection.description}
-            </Typography>
-            {" — I'll be in your neighborhood doing errands this…"}
-          </React.Fragment>
-        }
-      />
+      <Link to={`/${collection.key}`} style={{ textDecoration: "none" }}>
+        <ListItemText
+          primary={collection.title}
+          secondary={
+            <React.Fragment>
+              <Typography
+                component="span"
+                variant="body2"
+                sx={{ color: "text.primary", display: "inline" }}
+              >
+                {collection.description}
+              </Typography>
+              {/* {" — I'll be in your neighborhood doing errands this…"} */}
+            </React.Fragment>
+          }
+        />
+      </Link>
     </ListItem>
   )
 }
