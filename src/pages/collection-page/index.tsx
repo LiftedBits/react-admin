@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Collection } from "../../config/upayaa"
 import { getList } from "../../functions/apis"
@@ -27,29 +27,17 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
   }
 
   async function getAndSetData() {
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    // await new Promise((resolve) => setTimeout(resolve, 1000000))
     const data = await getList(collection.key)
     setItems(data)
     setLoading(false)
   }
   useEffect(() => {
-    console.log("useEffect")
     getAndSetData()
   }, [])
 
   return loading ? (
-    <Container
-      style={{
-        height: "100%",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        paddingTop: 0,
-      }}
-    >
-      <CollectionPageSkeleton />
-    </Container>
+    <CollectionPageSkeleton />
   ) : (
     <Box>
       <Navbar />

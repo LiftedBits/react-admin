@@ -114,8 +114,11 @@ export const collections: Record<string, Collection> = {
   },
 }
 
+// export const API_URL =
+//   "http://127.0.0.1:5001/upayaa-website-backend/us-central1/api/"
+
 export const API_URL =
-  "http://127.0.0.1:5001/upayaa-website-backend/us-central1/api/"
+  "https://us-central1-upayaa-website-backend.cloudfunctions.net/api/"
 
 export type Blog = {
   created_at: string

@@ -2,6 +2,8 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
+  GridEventListener,
+  GridRowEditStopReasons,
   GridRowId,
   GridRowModel,
   GridRowModes,
@@ -108,6 +110,16 @@ export default function DataTable({
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel)
   }
+
+  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
+    params,
+    event
+  ) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true
+    }
+  }
+
   columns = [
     ...columns,
     {
@@ -166,6 +178,10 @@ export default function DataTable({
         pageSizeOptions={[5, 10]}
         checkboxSelection
         apiRef={apiRef}
+        rowModesModel={rowModesModel}
+        onRowModesModelChange={handleRowModesModelChange}
+        onRowEditStop={handleRowEditStop}
+        processRowUpdate={processRowUpdate}
         onRowSelectionModelChange={handleSelectionChange}
         slots={{ toolbar: EditToolbar }}
         slotProps={{

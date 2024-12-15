@@ -1,14 +1,21 @@
-import { Skeleton } from "@mui/material"
+import { Container, Skeleton } from "@mui/material"
 
 const CollectionPageSkeleton = () => {
   return (
-    <>
-      <Skeleton
-        variant="rounded"
-        width="100%"
-        height={60}
-        style={{ marginBottom: 50 }}
-      />
+    <Container style={{ height: "100vh", width: "100vw", paddingTop: 20 }}>
+      <Container
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          height: 50,
+          marginBottom: 20,
+          gap: "10%",
+        }}
+      >
+        <Skeleton variant="rounded" style={{ flex: 0.125, height: "100%" }} />
+        <Skeleton variant="rounded" style={{ flex: 0.8, height: "100%" }} />
+        <Skeleton variant="rounded" style={{ flex: 0.075, height: "100%" }} />
+      </Container>
       <Skeleton
         variant="rectangular"
         width={"60%"}
@@ -45,7 +52,7 @@ const CollectionPageSkeleton = () => {
         height={40}
         style={{ marginBottom: 20 }}
       />
-    </>
+    </Container>
   )
 }
 
