@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material"
+import { Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Collection } from "../../config/upayaa"
 import { getList } from "../../functions/apis"
@@ -39,7 +39,7 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
   return loading ? (
     <CollectionPageSkeleton />
   ) : (
-    <Box>
+    <>
       <Navbar />
       <BreadcrumbsBar
         stations={[
@@ -65,7 +65,7 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
         data={selectedItem}
         onSave={handleSave}
       />
-    </Box>
+    </>
   )
 }
 

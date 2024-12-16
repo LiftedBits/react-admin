@@ -190,7 +190,7 @@ export default function DataTable({
         // onRowClick={onRowClick}
         sx={{ border: 0 }}
       />
-      <SplitButton />
+      {/* <SplitButton /> */}
     </Paper>
   )
 }
