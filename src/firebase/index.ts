@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { getAuth, signOut, signInWithEmailAndPassword } from "firebase/auth"
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
@@ -21,5 +21,15 @@ export const handleSignIn = async (email: string, password: string) => {
   } catch (error) {
     console.error("Error signing in", error)
     return false
+  }
+}
+
+export const handleLogout = async (): Promise<void> => {
+  try {
+    const auth = getAuth()
+    await signOut(auth)
+    console.log("User logged out successfully.")
+  } catch (error) {
+    console.error("Error logging out:", error)
   }
 }
