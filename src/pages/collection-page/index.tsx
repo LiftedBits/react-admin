@@ -79,10 +79,14 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
         },
       })
       try {
-        await createItem(collection.key, {
+        const response = await createItem(collection.key, {
           ...data,
         })
-        setItems((items) => [...items, { id: id, ...data }])
+        if (response.success) {
+          setItems((items) => [...items, { id: id, ...data }])
+        } else {
+          throw Error
+        }
       } catch (error) {
         console.log("error caught")
         console.log(`Error: ${error}`)

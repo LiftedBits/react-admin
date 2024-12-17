@@ -8,48 +8,20 @@ import {
   GridRowModel,
   GridRowModes,
   GridRowModesModel,
-  GridSlotProps,
-  GridToolbarContainer,
 } from "@mui/x-data-grid"
 import Paper from "@mui/material/Paper"
 import { useGridApiRef } from "@mui/x-data-grid"
-import { useState } from "react"
+import { startTransition, useState } from "react"
 import { Action } from "../../types"
 import { MULTI_SELECT_ACTIONS, SINGLE_SELECT_ACTIONS } from "../../config"
-import AddIcon from "@mui/icons-material/Add"
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import SaveIcon from "@mui/icons-material/Save"
 import CancelIcon from "@mui/icons-material/Close"
-import { Button } from "@mui/material"
-import { randomId } from "@mui/x-data-grid-generator"
 import { getObjectFromRow } from "../../functions/utils"
 import { OptimisticAction } from "../../pages/collection-page"
 import UtilsBar from "./utils-bar"
-
-function EditToolbar(props: GridSlotProps["toolbar"]) {
-  const { setRows, setRowModesModel } = props
-
-  const handleClick = () => {
-    const id = randomId()
-    setRows((oldRows) => [
-      ...oldRows,
-      { id, name: "", age: "", role: "", isNew: true },
-    ])
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
-    }))
-  }
-
-  return (
-    <GridToolbarContainer>
-      <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add record
-      </Button>
-    </GridToolbarContainer>
-  )
-}
+import { deleteItem, updateItem } from "../../functions/apis"
 
 const paginationModel = { page: 0, pageSize: 5 }
 
@@ -72,7 +44,7 @@ export default function DataTable({
   fields,
   update,
   collection,
-  openModal
+  openModal,
 }: DataTableProps) {
   const [actions, setActions] = useState<Action[]>([])
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({})
@@ -95,8 +67,21 @@ export default function DataTable({
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } })
   }
 
-  const handleDeleteClick = (id: GridRowId) => () => {
-    setRows(rows.filter((row) => row.id !== id))
+  const handleDeleteClick = (id: GridRowId, row: GridRowModel) => async () => {
+    // setRows(rows.filter((row) => row.id !== id))
+    startTransition(async () => {
+      update({ type: "delete", id: id as string })
+      try {
+        const response = await deleteItem(collection, id as string)
+        if (response.success) {
+          setRows(rows.filter((row) => row.id !== id))
+        } else {
+          throw Error
+        }
+      } catch (error) {
+        update({ type: "create", newDoc: row })
+      }
+    })
   }
 
   const handleCancelClick = (id: GridRowId) => () => {
@@ -111,12 +96,25 @@ export default function DataTable({
     }
   }
 
-  const processRowUpdate = (newRow: GridRowModel) => {
-    console.log(getObjectFromRow(fields, newRow))
-    const updatedRow = { ...newRow, isNew: false }
-    // setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)))
-    update({ id: newRow.id, type: "update", updatedRow: newRow })
-    return updatedRow
+  const processRowUpdate = async (
+    newRow: GridRowModel,
+    oldRow: GridRowModel
+  ) => {
+    const payload = getObjectFromRow(fields, newRow)
+    startTransition(async () => {
+      update({ type: "update", id: newRow.id, updatedRow: newRow })
+      try {
+        const response = await updateItem("collection", newRow.id, payload)
+        if (response.success) {
+          setRows(rows.map((row) => (row.id === newRow.id ? newRow : row)))
+        } else {
+          throw Error
+        }
+      } catch (error) {
+        update({ type: "update", id: newRow.id, updatedRow: oldRow })
+      }
+    })
+    return newRow
   }
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
@@ -140,7 +138,7 @@ export default function DataTable({
       headerName: "Actions",
       width: 100,
       cellClassName: "actions",
-      getActions: ({ id }) => {
+      getActions: ({ id, row }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit
 
         if (isInEditMode) {
@@ -174,7 +172,7 @@ export default function DataTable({
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={handleDeleteClick(id)}
+            onClick={handleDeleteClick(id, row)}
             color="inherit"
           />,
         ]
@@ -183,11 +181,7 @@ export default function DataTable({
   ]
   return (
     <Paper sx={{ height: 400, width: "100%", maxWidth: 1000 }}>
-      <UtilsBar
-        searchText=""
-        onChange={() => {}}
-        openModal={openModal}
-      />
+      <UtilsBar searchText="" onChange={() => {}} openModal={openModal} />
       <DataGrid
         rows={optimisticRows}
         columns={columns}
@@ -206,8 +200,6 @@ export default function DataTable({
         // }}
         sx={{ border: 0 }}
       />
-      {/* <SplitButton /> */}
-      {/* <button onClick={}>asdf</button> */}
     </Paper>
   )
 }
