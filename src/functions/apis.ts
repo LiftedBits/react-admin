@@ -1,7 +1,6 @@
 import { API_URL } from "../config/upayaa"
 
 export const getList = async (collection: string) => {
-  console.log(process.env.VITE_APP_ADMIN_API_KEY)
   const response = await fetch(`${API_URL}${collection}`, {
     method: "GET",
     headers: {

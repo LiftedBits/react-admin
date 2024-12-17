@@ -1,4 +1,5 @@
-import { GridRenderCellParams } from "@mui/x-data-grid"
+import { GridRenderCellParams, GridRowModel } from "@mui/x-data-grid"
+import { Field } from "../config/upayaa"
 
 export const convertToReadableDateTime = (isoString: string): string => {
   const date = new Date(isoString)
@@ -30,4 +31,24 @@ export const getDateRenderProps = () => {
 
 export const areObjectsEqual = (obj1: any, obj2: any): boolean => {
   return JSON.stringify(obj1) === JSON.stringify(obj2)
+}
+
+export const getObjectFromRow = (fields: string[], row: GridRowModel) => {
+  return Object.fromEntries(fields.map((field) => [field, row[field]]))
+}
+
+export const getNullObject = (fields: Field[]) => {
+  return Object.fromEntries(fields.map((field) => [field.key, null]))
+}
+
+export const generateRandomId = (length: number): string => {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+  let result = ""
+  const charactersLength = characters.length
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charactersLength)
+    result += characters.charAt(randomIndex)
+  }
+  return result
 }

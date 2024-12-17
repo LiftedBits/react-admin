@@ -8,13 +8,11 @@ import {
   GridRowModel,
   GridRowModes,
   GridRowModesModel,
-  GridRowParams,
   GridSlotProps,
   GridToolbarContainer,
 } from "@mui/x-data-grid"
 import Paper from "@mui/material/Paper"
 import { useGridApiRef } from "@mui/x-data-grid"
-import SplitButton from "../button-group"
 import { useState } from "react"
 import { Action } from "../../types"
 import { MULTI_SELECT_ACTIONS, SINGLE_SELECT_ACTIONS } from "../../config"
@@ -25,6 +23,9 @@ import SaveIcon from "@mui/icons-material/Save"
 import CancelIcon from "@mui/icons-material/Close"
 import { Button } from "@mui/material"
 import { randomId } from "@mui/x-data-grid-generator"
+import { getObjectFromRow } from "../../functions/utils"
+import { OptimisticAction } from "../../pages/collection-page"
+import UtilsBar from "./utils-bar"
 
 function EditToolbar(props: GridSlotProps["toolbar"]) {
   const { setRows, setRowModesModel } = props
@@ -54,20 +55,28 @@ const paginationModel = { page: 0, pageSize: 5 }
 
 interface DataTableProps {
   rows: any[]
+  optimisticRows: any[]
   setRows: (rows: any[]) => void
   columns: GridColDef[]
-  onRowClick: (params: GridRowParams) => void
+  fields: string[]
+  update: (action: OptimisticAction) => void
+  collection: string
+  openModal: () => void
 }
 
 export default function DataTable({
   rows,
+  optimisticRows,
   setRows,
   columns,
-  onRowClick,
+  fields,
+  update,
+  collection,
+  openModal
 }: DataTableProps) {
   const [actions, setActions] = useState<Action[]>([])
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({})
-  console.log(actions)
+  // console.log(actions)
   const apiRef = useGridApiRef()
   const handleSelectionChange = () => {
     const selectedRows = apiRef.current.getSelectedRows()
@@ -77,6 +86,7 @@ export default function DataTable({
       setActions(MULTI_SELECT_ACTIONS)
     }
   }
+
   const handleEditClick = (id: GridRowId) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } })
   }
@@ -102,8 +112,10 @@ export default function DataTable({
   }
 
   const processRowUpdate = (newRow: GridRowModel) => {
+    console.log(getObjectFromRow(fields, newRow))
     const updatedRow = { ...newRow, isNew: false }
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)))
+    // setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)))
+    update({ id: newRow.id, type: "update", updatedRow: newRow })
     return updatedRow
   }
 
@@ -170,9 +182,14 @@ export default function DataTable({
     },
   ]
   return (
-    <Paper sx={{ height: 400, width: "100%" }}>
+    <Paper sx={{ height: 400, width: "100%", maxWidth: 1000 }}>
+      <UtilsBar
+        searchText=""
+        onChange={() => {}}
+        openModal={openModal}
+      />
       <DataGrid
-        rows={rows}
+        rows={optimisticRows}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
@@ -183,14 +200,14 @@ export default function DataTable({
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
         onRowSelectionModelChange={handleSelectionChange}
-        slots={{ toolbar: EditToolbar }}
-        slotProps={{
-          toolbar: { setRows, setRowModesModel },
-        }}
-        // onRowClick={onRowClick}
+        // slots={{ toolbar: EditToolbar }}
+        // slotProps={{
+        //   toolbar: { setRows, setRowModesModel },
+        // }}
         sx={{ border: 0 }}
       />
       {/* <SplitButton /> */}
+      {/* <button onClick={}>asdf</button> */}
     </Paper>
   )
 }

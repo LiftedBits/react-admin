@@ -1,0 +1,72 @@
+import React, { useState } from "react"
+import { Modal, Box, Typography, TextField, Button } from "@mui/material"
+import { Field } from "../../config/upayaa"
+
+interface AddModalProps {
+  open: boolean
+  handleClose: () => void
+  fields: Field[]
+  addEntry: () => void
+  data: { [key: string]: any }
+  setData: (newData: { [key: string]: any }) => void
+}
+
+const AddModal: React.FC<AddModalProps> = ({
+  open,
+  handleClose,
+  fields,
+  addEntry,
+  data,
+  setData,
+}) => {
+  const [isValid, setIsValid] = useState(true)
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    const newData = { ...data, [name]: value }
+    setData(newData)
+    // setIsChanged(!areObjectsEqual(newData, data))
+  }
+
+  const handleSubmit = async () => {
+    if (isValid) {
+      await addEntry()
+      handleClose()
+    }
+  }
+
+  return (
+    <Modal open={open} onClose={handleClose}>
+      <Box sx={{ ...modalStyle }}>
+        <Typography variant="h6">Add Entry</Typography>
+        {Object.keys(data).map((field) => (
+          <TextField
+            key={field}
+            name={field}
+            label={field}
+            value={data[field]}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+        ))}
+        <Button variant="contained" onClick={handleSubmit} disabled={!isValid}>
+          Save
+        </Button>
+      </Box>
+    </Modal>
+  )
+}
+
+const modalStyle = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+}
+
+export default AddModal
