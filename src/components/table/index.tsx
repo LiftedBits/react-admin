@@ -104,7 +104,7 @@ export default function DataTable({
     startTransition(async () => {
       update({ type: "update", id: newRow.id, updatedRow: newRow })
       try {
-        const response = await updateItem("collection", newRow.id, payload)
+      const response = await updateItem(collection, newRow.id, payload)
         if (response.success) {
           setRows(rows.map((row) => (row.id === newRow.id ? newRow : row)))
         } else {

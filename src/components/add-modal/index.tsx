@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { Modal, Box, Typography, TextField, Button } from "@mui/material"
 import { Field } from "../../config/upayaa"
+import FileUpload from "./upload-image"
 
 interface AddModalProps {
   open: boolean
@@ -20,6 +21,7 @@ const AddModal: React.FC<AddModalProps> = ({
   setData,
 }) => {
   const [isValid, setIsValid] = useState(true)
+  const [uploadSuccess, setUploadSuccess] = useState(false)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -39,17 +41,29 @@ const AddModal: React.FC<AddModalProps> = ({
     <Modal open={open} onClose={handleClose}>
       <Box sx={{ ...modalStyle }}>
         <Typography variant="h6">Add Entry</Typography>
-        {Object.keys(data).map((field) => (
-          <TextField
-            key={field}
-            name={field}
-            label={field}
-            value={data[field]}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-        ))}
+        {fields.map((field) =>
+          field.type === "string" ? (
+            <TextField
+              key={field.key}
+              name={field.key}
+              label={field.key}
+              value={data[field.key]}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+          ) : (
+            <FileUpload
+              key={field.key}
+              accept="image/*"
+              uploadSuccess={uploadSuccess}
+              setUploadSuccess={setUploadSuccess}
+              data={data}
+              setData={setData}
+              field={field.key}
+            />
+          )
+        )}
         <Button variant="contained" onClick={handleSubmit} disabled={!isValid}>
           Save
         </Button>

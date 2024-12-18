@@ -82,6 +82,8 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
         const response = await createItem(collection.key, {
           ...data,
         })
+        console.log(data)
+        console.log(response)
         if (response.success) {
           setItems((items) => [...items, { id: id, ...data }])
         } else {

@@ -1,6 +1,7 @@
 import React from "react"
 import TextField from "@mui/material/TextField"
-import { Button } from "@mui/material"
+import { IconButton } from "@mui/material"
+import Add from "@mui/icons-material/Add"
 
 interface UtilsBarProps {
   searchText: string
@@ -35,7 +36,10 @@ const UtilsBar = ({ searchText, onChange, openModal }: UtilsBarProps) => {
           type: "search",
         }}
       />
-      <Button onClick={openModal}>Add entry</Button>
+      {/* <Button onClick={openModal}>Add entry</Button> */}
+      <IconButton onClick={openModal}>
+        <Add />
+      </IconButton>
     </div>
   )
 }

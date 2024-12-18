@@ -37,6 +37,7 @@ export const collections: Record<string, Collection> = {
       { key: "title", type: "string" },
       { key: "description", type: "string" },
       { key: "image_url", type: "image" },
+      { key: "url", type: "string" },
     ],
     icon: ArticleIcon,
     cols: [
