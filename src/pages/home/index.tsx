@@ -1,8 +1,6 @@
 import { Container, useTheme } from "@mui/material"
 import CollectionsList from "../../components/collections-list"
 import { collections } from "../../config/upayaa"
-import ImageUpload from "../../components/add-modal/upload-image"
-import FileUpload from "../../components/add-modal/upload-image"
 
 export default function Home() {
   const theme = useTheme()

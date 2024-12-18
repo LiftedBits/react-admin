@@ -8,6 +8,7 @@ import { storage } from "../../firebase"
 import SaveIcon from "@mui/icons-material/Save"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { Container } from "@mui/system"
+import { useSnackbar } from "../../contexts/snackbar-context"
 
 export type FileUploadProps = {
   imageButton?: boolean
@@ -24,8 +25,6 @@ export type FileUploadProps = {
       height?: string
     }
   }
-  uploadSuccess: boolean
-  setUploadSuccess: (success: boolean) => void
   data: { [key: string]: any }
   setData: (newData: { [key: string]: any }) => void
   field: string
@@ -82,18 +81,18 @@ const FileUpload: React.FC<FileUploadProps> = ({
       height: "inherit",
     },
   } = {},
-  uploadSuccess,
-  setUploadSuccess,
   data,
   setData,
   field,
 }) => {
   const classes = useStyle()
+  const { showSnackbar } = useSnackbar()
   const [imageUrl, setImageUrl] = useState<string | undefined>(url)
   const [labelText, setLabelText] = useState<string>(hoverLabel)
   const [isDragOver, setIsDragOver] = useState<boolean>(false)
   const [isMouseOver, setIsMouseOver] = useState<boolean>(false)
   const [image, setImage] = useState<File | null>(null)
+  const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const stopDefaults = (e: React.DragEvent) => {
     e.stopPropagation()
@@ -131,15 +130,17 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const handleUpload = async () => {
     if (image) {
       const imageRef = ref(storage, `images/${image.name}`)
+      setIsUploading(true)
       await uploadBytes(imageRef, image)
       const url = await getDownloadURL(imageRef)
+      setIsUploading(false)
       if (url) {
         setImageUrl(url)
-        setUploadSuccess(true)
         setData({ ...data, [field]: url })
+        showSnackbar("Image uploaded to firebase successfully", "success")
       } else {
-        setUploadSuccess(false)
         setData({ ...data, [field]: "" })
+        showSnackbar("Failed to upload image to firebase", "error")
       }
     }
   }
@@ -210,7 +211,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             <img src={imageUrl} height="100px" />
           </a>
           <Container style={{ display: "flex", justifyContent: "center" }}>
-            <IconButton onClick={handleUpload}>
+            <IconButton onClick={handleUpload} disabled={isUploading}>
               <SaveIcon />
             </IconButton>
             <IconButton
@@ -218,6 +219,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 setImageUrl("")
                 setImage(null)
               }}
+              disabled={isUploading}
             >
               <DeleteIcon />
             </IconButton>

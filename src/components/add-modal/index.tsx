@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react"
 import { Modal, Box, Typography, TextField, Button } from "@mui/material"
 import { Field } from "../../config/upayaa"
 import FileUpload from "./upload-image"
-import { deleteFileFromUrl } from "../../firebase"
 
 interface AddModalProps {
   open: boolean
@@ -22,7 +21,6 @@ const AddModal: React.FC<AddModalProps> = ({
   setData,
 }) => {
   const [isValid, setIsValid] = useState(true)
-  const [uploadSuccess, setUploadSuccess] = useState(false)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -68,8 +66,6 @@ const AddModal: React.FC<AddModalProps> = ({
             <FileUpload
               key={field.key}
               accept="image/*"
-              uploadSuccess={uploadSuccess}
-              setUploadSuccess={setUploadSuccess}
               data={data}
               setData={setData}
               field={field.key}

@@ -32,17 +32,6 @@ const UtilsBar = ({
         justifyContent: "space-between",
       }}
     >
-      {/* <TextField
-        label="Search"
-        variant="outlined"
-        fullWidth
-        value={searchText}
-        onChange={handleInputChange}
-        placeholder="Type to search..."
-        InputProps={{
-          type: "search",
-        }}
-      /> */}
       <Search>
         <SearchIconWrapper>
           <SearchIcon />
@@ -50,6 +39,8 @@ const UtilsBar = ({
         <StyledInputBase
           placeholder="Search…"
           inputProps={{ "aria-label": "search" }}
+          value={searchText}
+          onChange={handleInputChange}
         />
       </Search>
       <Container style={{ textAlign: "right" }}>

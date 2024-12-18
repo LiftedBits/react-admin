@@ -51,7 +51,7 @@ export default function DataTable({
 }: DataTableProps) {
   const [actions, setActions] = useState<Action[]>([])
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({})
-  // console.log(actions)
+  console.log(actions)
   const { showSnackbar } = useSnackbar()
   const apiRef = useGridApiRef()
   const handleSelectionChange = () => {

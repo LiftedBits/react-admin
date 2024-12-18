@@ -25,6 +25,8 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
     getNullObject(collection.fields)
   )
 
+  console.log(isPending)
+
   const { showSnackbar } = useSnackbar()
 
   const handleClose = () => {
