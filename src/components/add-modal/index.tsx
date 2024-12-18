@@ -1,7 +1,8 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Modal, Box, Typography, TextField, Button } from "@mui/material"
 import { Field } from "../../config/upayaa"
 import FileUpload from "./upload-image"
+import { deleteFileFromUrl } from "../../firebase"
 
 interface AddModalProps {
   open: boolean
@@ -27,15 +28,26 @@ const AddModal: React.FC<AddModalProps> = ({
     const { name, value } = event.target
     const newData = { ...data, [name]: value }
     setData(newData)
-    // setIsChanged(!areObjectsEqual(newData, data))
+  }
+
+  const checkValidity = (data: { [key: string]: any }) => {
+    let validity = true
+    fields.forEach((field) => {
+      if (!data[field.key]) {
+        validity = false
+      }
+    })
+    return validity
   }
 
   const handleSubmit = async () => {
-    if (isValid) {
-      await addEntry()
-      handleClose()
-    }
+    await addEntry()
+    handleClose()
   }
+
+  useEffect(() => {
+    setIsValid(checkValidity(data))
+  }, [data])
 
   return (
     <Modal open={open} onClose={handleClose}>

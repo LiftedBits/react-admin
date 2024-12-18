@@ -22,6 +22,7 @@ import { getObjectFromRow } from "../../functions/utils"
 import { OptimisticAction } from "../../pages/collection-page"
 import UtilsBar from "./utils-bar"
 import { deleteItem, updateItem } from "../../functions/apis"
+import { useSnackbar } from "../../contexts/snackbar-context"
 
 const paginationModel = { page: 0, pageSize: 5 }
 
@@ -34,6 +35,7 @@ interface DataTableProps {
   update: (action: OptimisticAction) => void
   collection: string
   openModal: () => void
+  refresh: () => void
 }
 
 export default function DataTable({
@@ -45,10 +47,12 @@ export default function DataTable({
   update,
   collection,
   openModal,
+  refresh,
 }: DataTableProps) {
   const [actions, setActions] = useState<Action[]>([])
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({})
   // console.log(actions)
+  const { showSnackbar } = useSnackbar()
   const apiRef = useGridApiRef()
   const handleSelectionChange = () => {
     const selectedRows = apiRef.current.getSelectedRows()
@@ -75,10 +79,12 @@ export default function DataTable({
         const response = await deleteItem(collection, id as string)
         if (response.success) {
           setRows(rows.filter((row) => row.id !== id))
+          showSnackbar("Item deleted successfully", "success")
         } else {
           throw Error
         }
       } catch (error) {
+        showSnackbar("Error deleting item. Refresh and try again", "error")
         update({ type: "create", newDoc: row })
       }
     })
@@ -104,13 +110,15 @@ export default function DataTable({
     startTransition(async () => {
       update({ type: "update", id: newRow.id, updatedRow: newRow })
       try {
-      const response = await updateItem(collection, newRow.id, payload)
+        const response = await updateItem(collection, newRow.id, payload)
         if (response.success) {
           setRows(rows.map((row) => (row.id === newRow.id ? newRow : row)))
+          showSnackbar("Item updated successfully", "success")
         } else {
           throw Error
         }
       } catch (error) {
+        showSnackbar("Error updating item. Refresh and try again", "error")
         update({ type: "update", id: newRow.id, updatedRow: oldRow })
       }
     })
@@ -181,7 +189,12 @@ export default function DataTable({
   ]
   return (
     <Paper sx={{ height: 400, width: "100%", maxWidth: 1000 }}>
-      <UtilsBar searchText="" onChange={() => {}} openModal={openModal} />
+      <UtilsBar
+        searchText=""
+        onChange={() => {}}
+        openModal={openModal}
+        refresh={refresh}
+      />
       <DataGrid
         rows={optimisticRows}
         columns={columns}

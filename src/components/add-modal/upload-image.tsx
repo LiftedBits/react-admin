@@ -123,6 +123,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       setIsDragOver(false)
       if (imageButton && e.dataTransfer.files[0]) {
         setImageUrl(URL.createObjectURL(e.dataTransfer.files[0]))
+        setImage(e.dataTransfer.files[0])
       }
     },
   }

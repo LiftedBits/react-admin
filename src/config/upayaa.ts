@@ -80,6 +80,7 @@ export const collections: Record<string, Collection> = {
       // { key: "created_at", type: "string" },
       { key: "title", type: "string" },
       { key: "image_url", type: "image" },
+      { key: "url", type: "string" },
     ],
     icon: ViewCarouselIcon,
     cols: [

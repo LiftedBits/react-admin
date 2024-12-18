@@ -4,11 +4,12 @@ import { Collection } from "../../config/upayaa"
 import { createItem, getList } from "../../functions/apis"
 import DataTable from "../../components/table"
 import { CollectionPageSkeleton } from "../../components/skeleton"
-import { GridRowParams } from "@mui/x-data-grid"
 import BreadcrumbsBar from "../../components/breadcrumbs"
 import Navbar from "../../components/navbar"
 import AddModal from "../../components/add-modal"
 import { generateRandomId, getNullObject } from "../../functions/utils"
+import { useSnackbar } from "../../contexts/snackbar-context"
+import { deleteFileFromUrl } from "../../firebase"
 
 export type OptimisticAction =
   | { type: "create"; newDoc: { [key: string]: any } }
@@ -19,19 +20,16 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
   const [modalOpen, setModalOpen] = useState(false)
   const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedItem, setSelectedItem] = useState<any | null>(null)
   const [isPending, startTransition] = useTransition()
-  const [data, setData] = useState(getNullObject(collection.fields))
+  const [data, setData] = useState<{ [key: string]: any }>(
+    getNullObject(collection.fields)
+  )
 
-  const handleRowClick = (params: GridRowParams) => {
-    setSelectedItem(params.row)
-    setModalOpen(true)
-  }
+  const { showSnackbar } = useSnackbar()
+
   const handleClose = () => {
     setModalOpen(false)
-  }
-  const handleSave = (updatedData: { [key: string]: any }) => {
-    console.log("Saved data:", updatedData)
+    setData(getNullObject(collection.fields))
   }
 
   const [optimisticItems, addOptimisticUpdate] = useOptimistic(
@@ -58,9 +56,15 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
     setItems(data)
     setLoading(false)
   }
+
   useEffect(() => {
     getAndSetData()
   }, [])
+
+  const refreshData = async () => {
+    setLoading(true)
+    await getAndSetData()
+  }
 
   const getFields = (collection: Collection) => {
     return collection.fields.map((col) => {
@@ -82,16 +86,23 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
         const response = await createItem(collection.key, {
           ...data,
         })
-        console.log(data)
-        console.log(response)
         if (response.success) {
           setItems((items) => [...items, { id: id, ...data }])
+          showSnackbar("Entry added successfully", "success")
         } else {
           throw Error
         }
       } catch (error) {
-        console.log("error caught")
+        const fileFields = collection.fields.filter(
+          (field) => field.type === "image"
+        )
+        fileFields.forEach((field) => {
+          if (data[field.key]) {
+            deleteFileFromUrl(data[field.key])
+          }
+        })
         console.log(`Error: ${error}`)
+        showSnackbar("Error adding entry. Refresh and try again!", "error")
         addOptimisticUpdate({
           type: "delete",
           id: id,
@@ -134,6 +145,7 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
           fields={getFields(collection)}
           update={addOptimisticUpdate}
           collection={collection.key}
+          refresh={refreshData}
           openModal={() => setModalOpen(true)}
         />
       </Container>

@@ -1,15 +1,24 @@
 import React from "react"
-import TextField from "@mui/material/TextField"
 import { IconButton } from "@mui/material"
 import Add from "@mui/icons-material/Add"
+import { Search, SearchIconWrapper, StyledInputBase } from "../navbar"
+import SearchIcon from "@mui/icons-material/Search"
+import RefreshIcon from "@mui/icons-material/Refresh"
+import { Container } from "@mui/system"
 
 interface UtilsBarProps {
   searchText: string
   onChange: (value: string) => void
   openModal: () => void
+  refresh: () => void
 }
 
-const UtilsBar = ({ searchText, onChange, openModal }: UtilsBarProps) => {
+const UtilsBar = ({
+  searchText,
+  onChange,
+  openModal,
+  refresh,
+}: UtilsBarProps) => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value)
   }
@@ -18,14 +27,12 @@ const UtilsBar = ({ searchText, onChange, openModal }: UtilsBarProps) => {
     <div
       style={{
         padding: "20px",
-        maxWidth: "500px",
         margin: "auto",
         display: "flex",
-        height: 50,
-        gap: 50,
+        justifyContent: "space-between",
       }}
     >
-      <TextField
+      {/* <TextField
         label="Search"
         variant="outlined"
         fullWidth
@@ -35,11 +42,24 @@ const UtilsBar = ({ searchText, onChange, openModal }: UtilsBarProps) => {
         InputProps={{
           type: "search",
         }}
-      />
-      {/* <Button onClick={openModal}>Add entry</Button> */}
-      <IconButton onClick={openModal}>
-        <Add />
-      </IconButton>
+      /> */}
+      <Search>
+        <SearchIconWrapper>
+          <SearchIcon />
+        </SearchIconWrapper>
+        <StyledInputBase
+          placeholder="Search…"
+          inputProps={{ "aria-label": "search" }}
+        />
+      </Search>
+      <Container style={{ textAlign: "right" }}>
+        <IconButton onClick={openModal}>
+          <Add />
+        </IconButton>
+        <IconButton onClick={refresh}>
+          <RefreshIcon />
+        </IconButton>
+      </Container>
     </div>
   )
 }

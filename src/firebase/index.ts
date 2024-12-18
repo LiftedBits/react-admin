@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app"
 import { getAuth, signOut, signInWithEmailAndPassword } from "firebase/auth"
-import { getStorage } from "firebase/storage"
+import { deleteObject, getStorage, ref } from "firebase/storage"
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
@@ -33,5 +33,25 @@ export const handleLogout = async (): Promise<void> => {
     console.log("User logged out successfully.")
   } catch (error) {
     console.error("Error logging out:", error)
+  }
+}
+
+export const deleteFileFromUrl = async (fileUrl: string): Promise<void> => {
+  try {
+    const storageBucket = "upayaa-website-backend.firebasestorage.app"
+    const baseUrl = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/`
+    if (!fileUrl.startsWith(baseUrl)) {
+      throw new Error("Invalid file URL")
+    }
+
+    const encodedPath = fileUrl.replace(baseUrl, "").split("?")[0]
+    const filePath = decodeURIComponent(encodedPath)
+
+    const fileRef = ref(storage, filePath)
+
+    await deleteObject(fileRef)
+    console.log("File deleted successfully!")
+  } catch (error) {
+    console.error("Error deleting file:", error)
   }
 }
