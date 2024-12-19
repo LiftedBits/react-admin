@@ -14,7 +14,7 @@ interface BreadcrumbsBarProps {
 
 const BreadcrumbsBar = ({ stations }: BreadcrumbsBarProps) => {
   return (
-    <Box sx={{ backgroundColor: "#3E7B9D", padding: 2, marginTop: 0 }}>
+    <Box sx={{ padding: 2, marginTop: 0 }}>
       <Breadcrumbs
         separator="›"
         aria-label="breadcrumb"
