@@ -1,83 +1,154 @@
-import { Box, Container, Typography } from "@mui/material"
-import { useEffect, useState } from "react"
+import { Container, Typography } from "@mui/material"
+import { useEffect, useOptimistic, useState, useTransition } from "react"
 import { Collection } from "../../config/upayaa"
-import { getList } from "../../functions/apis"
+import { createItem, getList } from "../../functions/apis"
 import DataTable from "../../components/table"
 import { CollectionPageSkeleton } from "../../components/skeleton"
-import { GridRowParams } from "@mui/x-data-grid"
-import EditModal from "../../components/edit-modal"
-import BreadcrumbsBar from "../../components/breadcrumbs"
 import Navbar from "../../components/navbar"
+import AddModal from "../../components/add-modal"
+import { generateRandomId, getNullObject } from "../../functions/utils"
+import { useSnackbar } from "../../contexts/snackbar-context"
+import { deleteFileFromUrl } from "../../firebase"
+
+export type OptimisticAction =
+  | { type: "create"; newDoc: { [key: string]: any } }
+  | { type: "update"; id: string; updatedRow: { [key: string]: any } }
+  | { type: "delete"; id: string }
 
 const CollectionPage = ({ collection }: { collection: Collection }) => {
   const [modalOpen, setModalOpen] = useState(false)
   const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedItem, setSelectedItem] = useState<any | null>(null)
+  const [isPending, startTransition] = useTransition()
+  const [data, setData] = useState<{ [key: string]: any }>(
+    getNullObject(collection.fields)
+  )
 
-  const handleRowClick = (params: GridRowParams) => {
-    setSelectedItem(params.row)
-    setModalOpen(true)
-  }
+  console.log(isPending)
+
+  const { showSnackbar } = useSnackbar()
+
   const handleClose = () => {
     setModalOpen(false)
-  }
-  const handleSave = (updatedData: { [key: string]: any }) => {
-    console.log("Saved data:", updatedData)
+    setData(getNullObject(collection.fields))
   }
 
+  const [optimisticItems, addOptimisticUpdate] = useOptimistic(
+    items,
+    (state, action: OptimisticAction) => {
+      switch (action.type) {
+        case "create":
+          return [...state, action.newDoc]
+        case "update":
+          return state.map((doc) =>
+            doc.id === action.id ? action.updatedRow : doc
+          )
+        case "delete":
+          return state.filter((doc) => doc.id !== action.id)
+        default:
+          return state
+      }
+    }
+  )
+
   async function getAndSetData() {
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    // await new Promise((resolve) => setTimeout(resolve, 1000000))
     const data = await getList(collection.key)
     setItems(data)
     setLoading(false)
   }
+
   useEffect(() => {
-    console.log("useEffect")
     getAndSetData()
   }, [])
 
+  const refreshData = async () => {
+    setLoading(true)
+    await getAndSetData()
+  }
+
+  const getFields = (collection: Collection) => {
+    return collection.fields.map((col) => {
+      return col.key
+    })
+  }
+
+  const addEntry = async () => {
+    const id = generateRandomId(8)
+    startTransition(async () => {
+      addOptimisticUpdate({
+        type: "create",
+        newDoc: {
+          id: id,
+          ...data,
+        },
+      })
+      try {
+        const response = await createItem(collection.key, {
+          ...data,
+        })
+        if (response.success) {
+          setItems((items) => [...items, { id: id, ...data }])
+          showSnackbar("Entry added successfully", "success")
+        } else {
+          throw Error
+        }
+      } catch (error) {
+        const fileFields = collection.fields.filter(
+          (field) => field.type === "image"
+        )
+        fileFields.forEach((field) => {
+          if (data[field.key]) {
+            deleteFileFromUrl(data[field.key])
+          }
+        })
+        console.log(`Error: ${error}`)
+        showSnackbar("Error adding entry. Refresh and try again!", "error")
+        addOptimisticUpdate({
+          type: "delete",
+          id: id,
+        })
+      }
+    })
+  }
+
   return loading ? (
-    <Container
-      style={{
-        height: "100%",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        paddingTop: 0,
-      }}
-    >
-      <CollectionPageSkeleton />
-    </Container>
+    <CollectionPageSkeleton />
   ) : (
-    <Box>
+    <>
       <Navbar />
-      <BreadcrumbsBar
-        stations={[
-          { name: "Home", link: "/" },
-          {
-            name: collection.title,
-            link: `/${collection.key}`,
-            isActive: true,
-          },
-        ]}
-      />
-      <Typography variant="h4">{collection.title}</Typography>
-      <Typography variant="body1">{collection.description}</Typography>
-      <DataTable
-        columns={collection.cols}
-        rows={items}
-        setRows={setItems}
-        onRowClick={handleRowClick}
-      />
-      <EditModal
+      <Container
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          placeItems: "center",
+        }}
+      >
+        <Typography variant="h4">{collection.title}</Typography>
+        <Typography variant="body1">{collection.description}</Typography>
+        <DataTable
+          columns={collection.cols}
+          rows={items}
+          optimisticRows={optimisticItems}
+          setRows={setItems}
+          fields={getFields(collection)}
+          update={addOptimisticUpdate}
+          collection={collection.key}
+          refresh={refreshData}
+          openModal={() => setModalOpen(true)}
+        />
+      </Container>
+      <AddModal
         open={modalOpen}
         handleClose={handleClose}
-        data={selectedItem}
-        onSave={handleSave}
+        fields={collection.fields}
+        addEntry={addEntry}
+        data={data}
+        setData={setData}
       />
-    </Box>
+    </>
   )
 }
 
