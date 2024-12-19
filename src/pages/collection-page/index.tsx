@@ -4,7 +4,6 @@ import { Collection } from "../../config/upayaa"
 import { createItem, getList } from "../../functions/apis"
 import DataTable from "../../components/table"
 import { CollectionPageSkeleton } from "../../components/skeleton"
-import BreadcrumbsBar from "../../components/breadcrumbs"
 import Navbar from "../../components/navbar"
 import AddModal from "../../components/add-modal"
 import { generateRandomId, getNullObject } from "../../functions/utils"
@@ -118,16 +117,6 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
   ) : (
     <>
       <Navbar />
-      <BreadcrumbsBar
-        stations={[
-          { name: "Home", link: "/" },
-          {
-            name: collection.title,
-            link: `/${collection.key}`,
-            isActive: true,
-          },
-        ]}
-      />
       <Container
         style={{
           width: "100%",
