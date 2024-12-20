@@ -22,6 +22,7 @@ const Login = () => {
 
   return (
     <Container>
+      <title>UpayaaX | Admin | Login</title>
       <Paper elevation={3} style={{ padding: 50 }}>
         <Typography variant="h5" component="h1" gutterBottom>
           Login

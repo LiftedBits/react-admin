@@ -3,6 +3,7 @@ import { Container, Skeleton } from "@mui/material"
 const CollectionPageSkeleton = () => {
   return (
     <Container style={{ height: "100vh", width: "100vw", paddingTop: 20 }}>
+      <title>UpayaaX | Admin | Loading...</title>
       <Container
         style={{
           display: "flex",

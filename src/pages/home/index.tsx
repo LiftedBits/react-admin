@@ -18,6 +18,7 @@ export default function Home() {
         padding: theme.spacing(2), // Uses theme spacing
       }}
     >
+      <title>UpayaaX | Admin | Home</title>
       <CollectionsList collections={Object.values(collections)} />
     </Container>
   )

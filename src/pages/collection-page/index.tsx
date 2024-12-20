@@ -116,6 +116,7 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
     <CollectionPageSkeleton />
   ) : (
     <>
+      <title>UpayaaX | Admin | Collection</title>
       <Navbar
         stations={[
           { name: "Home", link: "/" },
