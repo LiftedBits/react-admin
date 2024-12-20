@@ -24,6 +24,7 @@ export type Field = {
     | "image"
     | "select"
     | "phone_number"
+  label: string
   options?: string[]
 }
 
@@ -34,10 +35,10 @@ export const collections: Record<string, Collection> = {
     key: "blogs",
     fields: [
       // { key: "created_at", type: "string" },
-      { key: "title", type: "string" },
-      { key: "description", type: "string" },
-      { key: "image_url", type: "image" },
-      { key: "url", type: "string" },
+      { key: "title", type: "string", label: "Title" },
+      { key: "description", type: "string", label: "Description" },
+      { key: "image_url", type: "image", label: "Thumbnail Image" },
+      { key: "url", type: "string", label: "URL" },
     ],
     icon: ArticleIcon,
     cols: [
@@ -78,9 +79,9 @@ export const collections: Record<string, Collection> = {
     key: "featured_blogs",
     fields: [
       // { key: "created_at", type: "string" },
-      { key: "title", type: "string" },
-      { key: "image_url", type: "image" },
-      { key: "url", type: "string" },
+      { key: "title", type: "string", label: "Title" },
+      { key: "image_url", type: "image", label: "Thumbnail Image" },
+      { key: "url", type: "string", label: "URL" },
     ],
     icon: ViewCarouselIcon,
     cols: [
@@ -113,12 +114,13 @@ export const collections: Record<string, Collection> = {
     key: "social_media_posts",
     fields: [
       // { key: "created_at", type: "string" },
-      { key: "title", type: "string" },
-      { key: "post_url", type: "string" },
+      { key: "title", type: "string", label: "Title" },
+      { key: "post_url", type: "string", label: "Post URL" },
       {
         key: "platform",
         type: "select",
         options: ["YouTube", "Instagram", "Facebook"],
+        label: "Platform",
       },
     ],
     icon: TagIcon,
@@ -153,9 +155,9 @@ export const collections: Record<string, Collection> = {
     key: "subscribers",
     fields: [
       // { key: "created_at", type: "string" },
-      { key: "email", type: "string" },
-      { key: "name", type: "string" },
-      { key: "phone_number", type: "phone_number" },
+      { key: "email", type: "string", label: "Email" },
+      { key: "name", type: "string", label: "Name" },
+      { key: "phone_number", type: "phone_number", label: "Phone Number" },
     ],
     icon: NewspaperIcon,
     cols: [

@@ -28,6 +28,7 @@ export type FileUploadProps = {
   data: { [key: string]: any }
   setData: (newData: { [key: string]: any }) => void
   field: string
+  label: string
 }
 
 const useStyle = makeStyles({
@@ -84,6 +85,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   data,
   setData,
   field,
+  label,
 }) => {
   const classes = useStyle()
   const { showSnackbar } = useSnackbar()
@@ -156,6 +158,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   return (
     <>
+      <Typography variant="body1" style={{ marginBottom: "10px" }}>
+        {label}
+      </Typography>
       {!imageUrl && (
         <>
           <input

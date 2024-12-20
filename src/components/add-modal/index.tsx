@@ -56,7 +56,7 @@ const AddModal: React.FC<AddModalProps> = ({
             <TextField
               key={field.key}
               name={field.key}
-              label={field.key}
+              label={field.label}
               value={data[field.key]}
               onChange={handleChange}
               fullWidth
@@ -69,6 +69,7 @@ const AddModal: React.FC<AddModalProps> = ({
               data={data}
               setData={setData}
               field={field.key}
+              label={field.label}
             />
           )
         )}
