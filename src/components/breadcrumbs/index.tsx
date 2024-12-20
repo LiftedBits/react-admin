@@ -2,7 +2,7 @@ import Breadcrumbs from "@mui/material/Breadcrumbs"
 import Link from "@mui/material/Link"
 import { Box } from "@mui/material"
 
-interface Station {
+export interface Station {
   name: string
   link: string
   isActive?: boolean
@@ -30,7 +30,10 @@ const BreadcrumbsBar = ({ stations }: BreadcrumbsBarProps) => {
             href={station.link}
             style={{
               textDecoration: "none",
+              pointerEvents: station.isActive ? "none" : "auto",
             }}
+            key={station.name}
+            color={station.isActive ? "inherit" : "primary"}
           >
             {station.name}
           </Link>

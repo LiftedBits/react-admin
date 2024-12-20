@@ -8,11 +8,10 @@ import Typography from "@mui/material/Typography"
 import InputBase from "@mui/material/InputBase"
 import MenuItem from "@mui/material/MenuItem"
 import Menu from "@mui/material/Menu"
-import BreadcrumbsBar from "../breadcrumbs"
+import BreadcrumbsBar, { Station } from "../breadcrumbs"
 import AccountCircle from "@mui/icons-material/AccountCircle"
 import MoreIcon from "@mui/icons-material/MoreVert"
 import { auth, handleLogout } from "../../firebase"
-import { collections } from "../../config/upayaa"
 export const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -63,7 +62,11 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }))
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar({
+  stations,
+}: {
+  stations: Station[]
+}) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [email, setEmail] = React.useState<string | null>(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -123,7 +126,6 @@ export default function PrimarySearchAppBar() {
     </Menu>
   )
 
-
   const mobileMenuId = "primary-search-account-menu-mobile"
   const renderMobileMenu = (
     <Menu
@@ -160,7 +162,6 @@ export default function PrimarySearchAppBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-       
           <Typography
             variant="h6"
             noWrap
@@ -174,15 +175,8 @@ export default function PrimarySearchAppBar() {
             />
           </Typography>
           <BreadcrumbsBar
-  stations={[
-    { name: "Home", link: "/" },
-    {
-      name: collections.blogs.title,
-      link: `/${collections.blogs.key}`,
-      isActive: true,
-    },
-  ]}
-/>
+            stations={stations}
+          />
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
@@ -209,7 +203,6 @@ export default function PrimarySearchAppBar() {
               <MoreIcon />
             </IconButton>
           </Box>
-       
         </Toolbar>
       </AppBar>
       {renderMobileMenu}

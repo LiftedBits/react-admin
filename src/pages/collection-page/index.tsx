@@ -116,7 +116,16 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
     <CollectionPageSkeleton />
   ) : (
     <>
-      <Navbar />
+      <Navbar
+        stations={[
+          { name: "Home", link: "/" },
+          {
+            name: collection.title,
+            link: `/${collection.key}`,
+            isActive: true,
+          },
+        ]}
+      />
       <Container
         style={{
           width: "100%",
@@ -124,10 +133,13 @@ const CollectionPage = ({ collection }: { collection: Collection }) => {
           flexDirection: "column",
           justifyContent: "center",
           placeItems: "center",
+          marginTop: "10px",
         }}
       >
         <Typography variant="h4">{collection.title}</Typography>
-        <Typography variant="body1">{collection.description}</Typography>
+        <Typography variant="body1" style={{ marginBottom: "10px" }}>
+          {collection.description}
+        </Typography>
         <DataTable
           columns={collection.cols}
           rows={items}
