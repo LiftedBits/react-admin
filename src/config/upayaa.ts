@@ -131,7 +131,7 @@ export const collections: Record<string, Collection> = {
         headerName: "Platform",
         type: "singleSelect",
         valueOptions: ["YouTube", "Instagram", "Facebook"],
-        editable: true,
+        editable: false,
         flex: 1,
       },
       // {
