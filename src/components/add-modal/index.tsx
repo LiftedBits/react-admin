@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react"
-import { Modal, Box, Typography, TextField, Button } from "@mui/material"
+import {
+  Modal,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  InputLabel,
+  FormControl,
+} from "@mui/material"
 import { Field } from "../../config/upayaa"
 import FileUpload from "./upload-image"
 
@@ -26,6 +37,10 @@ const AddModal: React.FC<AddModalProps> = ({
     const { name, value } = event.target
     const newData = { ...data, [name]: value }
     setData(newData)
+  }
+
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    setData({ ...data, [event.target.name]: event.target.value })
   }
 
   const checkValidity = (data: { [key: string]: any }) => {
@@ -62,6 +77,26 @@ const AddModal: React.FC<AddModalProps> = ({
               fullWidth
               margin="normal"
             />
+          ) : field.type === "select" ? (
+            <FormControl variant="filled" sx={{ minWidth: 120, mt: 1, mb: 1 }}>
+              <InputLabel id="demo-simple-select-filled-label">
+                {field.label}
+              </InputLabel>
+              <Select
+                key={field.key}
+                name={field.key}
+                label
+                value={data[field.key]}
+                onChange={handleSelectChange}
+              >
+                {field.options?.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+              <br />
+            </FormControl>
           ) : (
             <FileUpload
               key={field.key}
@@ -90,6 +125,8 @@ const modalStyle = {
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
+  display: "flex",
+  flexDirection: "column",
 }
 
 export default AddModal
